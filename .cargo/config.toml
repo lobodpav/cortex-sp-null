@@ -1,0 +1,14 @@
+[env]
+# The deferred formatter's log level
+DEFMT_LOG = "info"
+
+[build]
+target = "thumbv7em-none-eabihf"
+
+[target.thumbv7em-none-eabihf]
+rustflags = [
+    # Instructs the rustc compiler to pass the `-Tlink.x` argument to the linker.
+    # The `link.x` script comes from the `cortex-m-rt` crate and defines the memory layout.
+    # I.e. existing memory, code/data locations, etc.
+    "-C", "link-arg=-Tlink.x",
+]

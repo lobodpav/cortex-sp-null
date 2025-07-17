@@ -1,0 +1,9 @@
+[default.general]
+chip = "nrf52833_xxAA"
+
+[default.rtt]
+# Open RTTUI after flashing
+enabled = true
+# Writes the printed logs to the `./logs/` directory
+log_enabled = false
+

@@ -1,0 +1,17 @@
+[package]
+name = "cortex-sp-null"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = "0.7.5"
+log = "0.4.27"
+rtt-target = { version = "0.6.1", features = ["log"] }
+
+# Disables `cargo test`, and avoids IntelliJ complaints about the missing `test` crate.
+[[bin]]
+name = "cortex-sp-null"
+test = false
+doctest = false
+bench = false
