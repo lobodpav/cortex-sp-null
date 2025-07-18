@@ -1,6 +1,7 @@
 #![no_std]
 #![no_main]
 
+use core::arch::asm;
 use core::panic::PanicInfo;
 use cortex_m::asm::delay;
 use cortex_m_rt::entry;
@@ -37,10 +38,24 @@ fn log_sp_pc() {
     let sp_ptr = flash_origin as *const u32;       // Stack Pointer
     let pc_ptr = (flash_origin + 4) as *const u32; // Program Counter pointer
 
+    info!("SP FLASH ADDRESS: {:#010X}", sp_ptr as usize);
+    info!("PC FLASH ADDRESS: {:#010X}", pc_ptr as usize);
+    info!("SP RAM ADDRESS:   {:#010X}", safe_read_u32(sp_ptr));
+    info!("PC RAM ADDRESS:   {:#010X}", safe_read_u32(pc_ptr));
+}
+
+/// Safely reads a [u32] value where the [pointer] points to,
+/// even when it is a [null pointer](https://doc.rust-lang.org/std/ptr/fn.null.html) (a pointer to the `0x0` address).
+///
+/// See https://stackoverflow.com/a/79706233/1379273 for more details.
+fn safe_read_u32(pointer: *const u32) -> u32 {
+    let sp_value: u32;
     unsafe {
-        info!("SP FLASH ADDRESS: {:#010X}", sp_ptr as usize);
-        info!("PC FLASH ADDRESS: {:#010X}", pc_ptr as usize);
-        info!("SP RAM ADDRESS:   {:#010X}", *sp_ptr);
-        info!("PC RAM ADDRESS:   {:#010X}", *pc_ptr);
-    }
+        asm!(
+            "ldr {0}, [{1}]",   // Load from [r1] into r0 register
+            out(reg) sp_value,  // {0} = output register
+            in(reg) pointer,    // {1} = input register
+        );
+    };
+    sp_value
 }
